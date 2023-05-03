@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class GUI extends JFrame {
 
@@ -23,6 +25,7 @@ public class GUI extends JFrame {
 
     // card dimensions
     int cardSpacing = 8;
+    int cardArc = 8;
     int cardTW = gridW / 6;
     int cardTH = gridH / 2;
     int cardAW = cardTW - 2 * cardSpacing;
@@ -35,6 +38,7 @@ public class GUI extends JFrame {
 
     // fonts
     Font buttonFont = new Font("Verdana", Font.PLAIN, 18);
+    Font cardFont = new Font("Times New Roman", Font.BOLD, 32);
 
     // buttons
     JButton btnHit = new JButton("Hit");
@@ -42,7 +46,12 @@ public class GUI extends JFrame {
     JButton btnYes = new JButton("Yes");
     JButton btnNo = new JButton("No");
 
+    // arraylist of cards
+    ArrayList<Card> allCards = new ArrayList<Card>();
+    ArrayList<Card> playerCards = new ArrayList<Card>();
+    ArrayList<Card> dealerCards = new ArrayList<Card>();
 
+    int randomNum = new Random().nextInt(52); // random int between 0 and 52
 
     public GUI() {
         this.setSize(aW + 6, aH + 29);
@@ -95,7 +104,7 @@ public class GUI extends JFrame {
         board.add(btnYes);
 
         ActNo aNo = new ActNo();
-        btnNo.addActionListener(aYes);
+        btnNo.addActionListener(aNo);
         btnNo.setBounds(1080 + 52, 660, 96, 48);
         btnNo.setBackground(buttonColor);
         btnNo.setForeground(textColor);
@@ -105,6 +114,70 @@ public class GUI extends JFrame {
         btnNo.setContentAreaFilled(true);
         btnNo.setFont(buttonFont);
         board.add(btnNo);
+
+        // Construct the deck
+        String suitS1;
+        int id_setter = 0;
+        for (int s = 0; s < 4; s++) {
+            if (s == 0) {
+                suitS1 = "Spades";
+            } else if (s == 1) {
+                suitS1 = "Hearts";
+            } else if (s == 2) {
+                suitS1 = "Clubs";
+            } else {
+                suitS1 = "Diamonds";
+            }
+
+            for (int i = 2; i < 15; i++) {
+                allCards.add(new Card(i, suitS1, id_setter));
+                id_setter++;
+            }
+        }
+
+        randomNum = new Random().nextInt(52);
+        playerCards.add(allCards.get(randomNum));
+        allCards.get(randomNum).isDiscarded = true;
+
+        randomNum = new Random().nextInt(52);
+        while (true) {
+            if (!allCards.get(randomNum).isDiscarded) {
+                dealerCards.add(allCards.get(randomNum));
+                allCards.get(randomNum).isDiscarded = true;
+                break;
+            } else {
+                randomNum = new Random().nextInt(52);
+            }
+        }
+
+        randomNum = new Random().nextInt(52);
+        while (true) {
+            if (!allCards.get(randomNum).isDiscarded) {
+                playerCards.add(allCards.get(randomNum));
+                allCards.get(randomNum).isDiscarded = true;
+                break;
+            } else {
+                randomNum = new Random().nextInt(52);
+            }
+        }
+
+        randomNum = new Random().nextInt(52);
+        while (true) {
+            if (!allCards.get(randomNum).isDiscarded) {
+                dealerCards.add(allCards.get(randomNum));
+                allCards.get(randomNum).isDiscarded = true;
+                break;
+            } else {
+                randomNum = new Random().nextInt(52);
+            }
+        }
+
+        for (Card c : playerCards) {
+            System.out.println("Player had the card " + c.name + " of " + c.suit);
+        }
+        for (Card c : dealerCards) {
+            System.out.println("Dealer had the card " + c.name + " of " + c.suit);
+        }
     }
 
     public class Board extends JPanel {
@@ -123,9 +196,24 @@ public class GUI extends JFrame {
             // right section - hit & stay buttons
             g.drawRect(btnGridX, btnGridY, btnGridW, btnGridH);
 
-            for (int i = 0; i < 6; i++) {
-                g.drawRect(gridX + (i * cardTW + cardSpacing), gridY + cardSpacing, cardAW, cardAH);
-                g.drawRect(gridX + (i * cardTW + cardSpacing), gridY + cardSpacing + cardTH, cardAW, cardAH);
+            int index = 0;
+            for (Card c : playerCards) {
+                g.setColor(Color.WHITE);
+                g.fillRoundRect(gridX + (index * cardTW + cardSpacing), gridY + cardSpacing, cardAW, cardAH, cardArc, cardArc);
+                g.setColor(Color.BLACK);
+
+                if (c.suit.equalsIgnoreCase("Hearts") || c.suit.equalsIgnoreCase("Diamonds")) {
+                    g.setColor(Color.RED);
+                }
+
+                g.setFont(cardFont);
+                g.drawString(c.symbol, gridX + (index * cardTW + cardSpacing * 2), gridY + cardAH);
+
+                if (c.suit.equalsIgnoreCase("Spades")) {
+
+                }
+
+                index++;
             }
         }
     }
