@@ -9,6 +9,7 @@ public class Main implements Runnable {
     @Override
     public void run() {
         while (true) {
+            gui.refresher();
             gui.repaint();
         }
     }

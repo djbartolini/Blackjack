@@ -1,7 +1,12 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -10,6 +15,14 @@ public class GUI extends JFrame {
     // window resolution
     int aW = 1280;
     int aH = 800;
+
+    // game phases
+    boolean bool_hit_stay = true;
+    boolean bool_dealer_turn = false;
+    boolean bool_play_more = false;
+
+    // prompts
+    String play_again_q = "Play again?";
 
     // grid dimensions
     int gridX = 50;
@@ -39,6 +52,7 @@ public class GUI extends JFrame {
     // fonts
     Font buttonFont = new Font("Verdana", Font.PLAIN, 18);
     Font cardFont = new Font("Times New Roman", Font.BOLD, 32);
+    Font promptFont = new Font("Verdana", Font.PLAIN, 28);
 
     // buttons
     JButton btnHit = new JButton("Hit");
@@ -180,6 +194,30 @@ public class GUI extends JFrame {
         }
     }
 
+    public void refresher() {
+        if (bool_hit_stay) {
+            btnHit.setVisible(true);
+            btnStay.setVisible(true);
+            btnYes.setVisible(false);
+            btnNo.setVisible(false);
+
+        } else if (bool_dealer_turn) {
+            btnHit.setVisible(false);
+            btnStay.setVisible(false);
+            btnYes.setVisible(false);
+            btnNo.setVisible(false);
+        } else if (bool_play_more) {
+            btnHit.setVisible(false);
+            btnStay.setVisible(false);
+            btnYes.setVisible(true);
+            btnNo.setVisible(true);
+        }
+    }
+
+    public void dealerHitStay() {
+
+    }
+
     public class Board extends JPanel {
         @Override
         public void paintComponent(Graphics g) {
@@ -196,33 +234,140 @@ public class GUI extends JFrame {
             // right section - hit & stay buttons
             g.drawRect(btnGridX, btnGridY, btnGridW, btnGridH);
 
-            int index = 0;
-            for (Card c : playerCards) {
-                g.setColor(Color.WHITE);
-                g.fillRoundRect(gridX + (index * cardTW + cardSpacing), gridY + cardSpacing, cardAW, cardAH, cardArc, cardArc);
-                g.setColor(Color.BLACK);
+            // prompt
+            if (bool_play_more) {
+                g.setFont(promptFont);
+                g.drawString(play_again_q, btnGridX + 32, btnGridY + 580);
+            }
 
-                if (c.suit.equalsIgnoreCase("Hearts") || c.suit.equalsIgnoreCase("Diamonds")) {
-                    g.setColor(Color.RED);
+            // import images of card suits
+            File inputHearts = new File("resources/images/hearts.png");
+            File inputClubs = new File("resources/images/clubs.png");
+            File inputDiamonds = new File("resources/images/diamonds.png");
+            File inputSpades = new File("resources/images/spades.png");
+
+            BufferedImage heartsImage = null;
+            BufferedImage clubsImage = null;
+            BufferedImage diamondsImage = null;
+            BufferedImage spadesImage = null;
+
+            try {
+                heartsImage = ImageIO.read(inputHearts);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                clubsImage = ImageIO.read(inputClubs);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                diamondsImage = ImageIO.read(inputDiamonds);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                spadesImage = ImageIO.read(inputSpades);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // suit image dimensions
+            int scaledW = 48;
+            int scaledH = 52;
+
+            Image scaledHearts = heartsImage.getScaledInstance(scaledW, scaledH, BufferedImage.TYPE_INT_RGB);
+            Image scaledClubs = clubsImage.getScaledInstance(scaledW, scaledH, BufferedImage.TYPE_INT_RGB);
+            Image scaledDiamonds = diamondsImage.getScaledInstance(scaledW, scaledH, BufferedImage.TYPE_INT_RGB);
+            Image scaledSpades = spadesImage.getScaledInstance(scaledW, scaledH, BufferedImage.TYPE_INT_RGB);
+
+            // paint player cards
+            int playerCardIndex = 0;
+            for (Card c :playerCards) {
+                g.setColor(Color.WHITE);
+                g.fillRoundRect(gridX + (playerCardIndex * cardTW + cardSpacing), gridY + cardSpacing + 520, cardAW, cardAH, cardArc, cardArc);
+
+                switch (c.suit.toLowerCase()) {
+                    case "hearts":
+                        g.drawImage(scaledHearts, gridX + (playerCardIndex * cardTW + cardSpacing) + 40, gridY + 520 + cardSpacing + 60, null);
+                        g.setColor(Color.RED);
+                        break;
+                    case "clubs":
+                        g.drawImage(scaledClubs, gridX + (playerCardIndex * cardTW + cardSpacing) + 40, gridY + 520 + cardSpacing + 60, null);
+                        g.setColor(Color.BLACK);
+                        break;
+                    case "diamonds":
+                        g.drawImage(scaledDiamonds, gridX + (playerCardIndex * cardTW + cardSpacing) + 40, gridY + 520 + cardSpacing + 60, null);
+                        g.setColor(Color.RED);
+                        break;
+                    case "spades":
+                        g.drawImage(scaledSpades, gridX + (playerCardIndex * cardTW + cardSpacing) + 40, gridY + 520 + cardSpacing + 60, null);
+                        g.setColor(Color.BLACK);
+                        break;
                 }
 
                 g.setFont(cardFont);
-                g.drawString(c.symbol, gridX + (index * cardTW + cardSpacing * 2), gridY + cardAH);
+                g.drawString(c.symbol, gridX + (playerCardIndex * cardTW + cardSpacing * 2), gridY + cardAH + 520);
+                g.drawString(c.symbol, gridX + cardAW - 44 + (playerCardIndex * cardTW + cardSpacing * 2), gridY + cardAH + 520 - cardAH + 36);
 
-                if (c.suit.equalsIgnoreCase("Spades")) {
+                playerCardIndex++;
+            }
 
+            // paint dealer cards
+            if (bool_dealer_turn) {
+                int dealerCardIndex = 0;
+                for (Card c : dealerCards) {
+                    g.setColor(Color.WHITE);
+                    g.fillRoundRect(gridX + (dealerCardIndex * cardTW + cardSpacing), gridY + cardSpacing, cardAW, cardAH, cardArc, cardArc);
+
+                    switch (c.suit.toLowerCase()) {
+                        case "hearts":
+                            g.drawImage(scaledHearts, gridX + (dealerCardIndex * cardTW + cardSpacing) + 40, gridY + cardSpacing + 60, null);
+                            g.setColor(Color.RED);
+                            break;
+                        case "clubs":
+                            g.drawImage(scaledClubs, gridX + (dealerCardIndex * cardTW + cardSpacing) + 40, gridY + cardSpacing + 60, null);
+                            g.setColor(Color.BLACK);
+                            break;
+                        case "diamonds":
+                            g.drawImage(scaledDiamonds, gridX + (dealerCardIndex * cardTW + cardSpacing) + 40, gridY + cardSpacing + 60, null);
+                            g.setColor(Color.RED);
+                            break;
+                        case "spades":
+                            g.drawImage(scaledSpades, gridX + (dealerCardIndex * cardTW + cardSpacing) + 40, gridY + cardSpacing + 60, null);
+                            g.setColor(Color.BLACK);
+                            break;
+                    }
+
+                    g.setFont(cardFont);
+                    g.drawString(c.symbol, gridX + (dealerCardIndex * cardTW + cardSpacing * 2), gridY + cardAH);
+                    g.drawString(c.symbol, gridX + cardAW - 44 + (dealerCardIndex * cardTW + cardSpacing * 2), gridY + cardAH - cardAH + 36);
+
+                    dealerCardIndex++;
                 }
-
-                index++;
             }
         }
     }
+
 
     public class ActHit implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("You clicked the Hit button");
+            randomNum = new Random().nextInt(52);
+            while (true) {
+                if (!allCards.get(randomNum).isDiscarded) {
+                    playerCards.add(allCards.get(randomNum));
+                    allCards.get(randomNum).isDiscarded = true;
+                    break;
+                } else {
+                    randomNum = new Random().nextInt(52);
+                }
+            }
         }
     }
 
@@ -231,6 +376,9 @@ public class GUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("You clicked the Stay button");
+            bool_hit_stay = false;
+            bool_dealer_turn = true;
+            dealerHitStay();
         }
     }
 
