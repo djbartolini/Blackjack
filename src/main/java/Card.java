@@ -1,3 +1,9 @@
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 public class Card {
 
     /* Card properties:
@@ -40,4 +46,20 @@ public class Card {
     public int getValue() {
         return value;
     }
+
+    public void printCard(Graphics2D g2, boolean dealerTurn, boolean faceDown, int cardNumber) throws IOException {
+        BufferedImage deckImage = ImageIO.read(new File("resources/images/card-sprite-sheet.jpeg"));
+        int x = 2925;
+        int y = 1260;
+
+        // Create a 2D array from our sprite sheet of cards so we don't need 52 images
+        BufferedImage[][] cardImages = new BufferedImage[4][13];
+
+        for (int c = 0; c < 4; c++) {
+            for (int r = 0; r < 13; r++) {
+                cardImages[c][r] = deckImage.getSubimage(r*x/13, c*y/4, x/13, y/4);
+            }
+        }
+    }
+
 }
