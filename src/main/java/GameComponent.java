@@ -15,8 +15,8 @@ public class GameComponent extends JComponent implements MouseListener {
     public BufferedImage chip;
 
     private Font largeFont = new Font("Century", Font.BOLD, 24);
-    private Font detailsFont = new Font("Century", Font.PLAIN, 16);
-    private Font btnFont = new Font("Century", Font.PLAIN, 20);
+    private Font detailsFont = new Font("Century", Font.PLAIN, 14);
+    private Font balanceFont = new Font("Century", Font.PLAIN, 18);
 
     private ArrayList<Card> dealerHand;
     private ArrayList<Card> playerHand;
@@ -43,29 +43,32 @@ public class GameComponent extends JComponent implements MouseListener {
 
         try {
             background = ImageIO.read(new File("resources/images/background.jpeg"));
-            emblem = ImageIO.read(new File("resources/images/game-emblem.png"));
+            emblem = ImageIO.read(new File("resources/images/blackjack-emblem.png"));
             chip = ImageIO.read(new File("resources/images/chip.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         g2.drawImage(background, 0, 0, null);
-        g2.drawImage(emblem, 480, 240, null);
-        g2.drawImage(chip, 180, 600, null);
+        g2.drawImage(emblem, 480, 250, null);
+        g2.drawImage(chip, 120, 580, null);
 
         // Dealer & player board section labels
         g2.setColor(Color.WHITE);
         g2.setFont(largeFont);
-        g2.drawString("Dealer", 540, 120);
-        g2.drawString("Player", 540, 600);
+        g2.drawString("Dealer", 560, 240);
+        g2.drawString("Player", 560, 610);
 
         // Player instructions
         g2.setFont(detailsFont);
-        g2.drawString("Place your bet by clicking on the chip to start the round", 36, 720);
+        g2.drawString("Place your bet by clicking on the chip to start the round.", 36, 740);
 
         // Player chip balance
-        g2.setFont(detailsFont);
-        g2.drawString("Current balance: " + chipBalance, 580, 720);
+        g2.setFont(balanceFont);
+        g2.drawString("Current balance: " + chipBalance, 540, 740);
+
+        // Hand values
+        g2.drawString("Your hand: " + Game.getHandValue(playerHand), 900, 660);
 
         // Dealer draws
         try {
@@ -75,6 +78,7 @@ public class GameComponent extends JComponent implements MouseListener {
                         dealerHand.get(i).printCard(g2, true, true, i);
                     } else {
                         dealerHand.get(i).printCard(g2, true, false, i);
+                        g2.drawString("Dealer's hand: " + Game.getHandValue(dealerHand), 900, 120);
                     }
                 } else {
                     dealerHand.get(i).printCard(g2, true, false, i);
@@ -108,7 +112,7 @@ public class GameComponent extends JComponent implements MouseListener {
         int eX = e.getX();
         int eY = e.getY();
 
-        if (eX >= 180 && eX <= 260 && eY >= 600 && eY <= 680) {
+        if (eX >= 120 && eX <= 220 && eY >= 580 && eY <= 680) {
             betMade = true;
             String response = JOptionPane.showInputDialog(null, "Please enter your betting amount!", "BETTING", JOptionPane.PLAIN_MESSAGE);
 

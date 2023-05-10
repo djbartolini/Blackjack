@@ -48,16 +48,23 @@ public class Game {
         frame.setResizable(false);
 
         hitBtn = new JButton("Hit");
-        hitBtn.setBounds(300, 620, 90, 60);
+        hitBtn.setBounds(345, 620, 90, 60);
         hitBtn.setFont(btnFont);
+
         standBtn = new JButton("Stand");
         standBtn.setBounds(555, 620, 90, 60);
         standBtn.setFont(btnFont);
+
+        doubleBtn = new JButton("Double");
+        doubleBtn.setBounds(765, 620, 90, 60);
+        doubleBtn.setFont(btnFont);
+
         exitBtn = new JButton("Exit");
-        exitBtn.setBounds(900, 620, 90, 60);
+        exitBtn.setBounds(1080, 626, 80, 48);
 
         frame.add(hitBtn);
         frame.add(standBtn);
+        frame.add(doubleBtn);
         frame.add(exitBtn);
 
         exitBtn.addActionListener(new ActionListener() {
@@ -79,7 +86,7 @@ public class Game {
         for (int i = 0; i < 2; i++) {
             dealerHand.add(deck.getCard(i));
         }
-        for (int i = 0; i < 2; i++) {
+        for (int i = 2; i < 4; i++) {
             playerHand.add(deck.getCard(i));
         }
         for (int i = 0; i < 4; i++) {
@@ -88,6 +95,7 @@ public class Game {
 
         cardComponent = new GameComponent(dealerHand, playerHand);
         cardComponent.setBounds(0, 0, 1200, 800);
+
         frame.add(cardComponent);
         frame.setVisible(true);
 
@@ -100,10 +108,6 @@ public class Game {
                 addCard(playerHand);
                 checkHand(playerHand);
 
-                if (getHandValue(playerHand) < 17 && getHandValue(dealerHand) < 17) {
-                    addCard(dealerHand);
-                    checkHand(dealerHand);
-                }
             }
         });
 
@@ -112,6 +116,7 @@ public class Game {
             public void actionPerformed(ActionEvent e) {
                 addCard(playerHand);
                 GameComponent.currentBet = GameComponent.currentBet * 2;
+                Main.chipBalance -= GameComponent.currentBet;
             }
         });
 
@@ -127,12 +132,22 @@ public class Game {
                     if (getHandValue(playerHand) > getHandValue(dealerHand)) {
                         faceDown = false;
                         dealerWon = false;
-                        JOptionPane.showMessageDialog(frame, "You win!");
+
+                        JOptionPane pane = new JOptionPane("You win!");
+                        JDialog d = pane.createDialog((JFrame)null, "Result");
+                        d.setLocation(270, 300);
+                        d.setVisible(true);
+
                         rest();
                         roundOver = true;
                     } else {
                         faceDown = false;
-                        JOptionPane.showMessageDialog(frame, "Dealer wins.");
+
+                        JOptionPane pane = new JOptionPane("Dealer wins.");
+                        JDialog d = pane.createDialog((JFrame)null, "Result");
+                        d.setLocation(270, 300);
+                        d.setVisible(true);
+
                         rest();
                         roundOver = true;
                     }
@@ -146,25 +161,45 @@ public class Game {
             if (getHandValue(hand) == 21) {
                 faceDown = false;
                 dealerWon = false;
-                JOptionPane.showMessageDialog(frame, "You win");
+
+                JOptionPane pane = new JOptionPane("You win!");
+                JDialog d = pane.createDialog((JFrame)null, "Result");
+                d.setLocation(270, 300);
+                d.setVisible(true);
+
                 rest();
                 roundOver = true;
             } else if (getHandValue(hand) > 21) {
                 faceDown = false;
-                JOptionPane.showMessageDialog(frame, "You busted! Dealer wins.");
+
+                JOptionPane pane = new JOptionPane("You busted! Dealer wins.");
+                JDialog d = pane.createDialog((JFrame)null, "Result");
+                d.setLocation(270, 300);
+                d.setVisible(true);
+
                 rest();
                 roundOver = true;
             }
         } else {
             if (getHandValue(hand) == 21) {
                 faceDown = false;
-                JOptionPane.showMessageDialog(frame, "Dealer got blackjack. Dealer wins.");
+
+                JOptionPane pane = new JOptionPane("Dealer got 21. Dealer wins.");
+                JDialog d = pane.createDialog((JFrame)null, "Result");
+                d.setLocation(270, 300);
+                d.setVisible(true);
+
                 rest();
                 roundOver = true;
             } else if (getHandValue(hand) > 21) {
                 faceDown = false;
                 dealerWon = false;
-                JOptionPane.showMessageDialog(frame, "Dealer busted. You win!");
+
+                JOptionPane pane = new JOptionPane("Dealer busted. You win!");
+                JDialog d = pane.createDialog((JFrame)null, "Result");
+                d.setLocation(270, 300);
+                d.setVisible(true);
+
                 rest();
                 roundOver = true;
             }
@@ -177,7 +212,7 @@ public class Game {
         faceDown = true;
     }
 
-    public boolean hasAce(ArrayList<Card> hand) {
+    public static boolean hasAce(ArrayList<Card> hand) {
         for (Card card : hand) {
             if (card.getValue() == 11) {
                 return true;
@@ -186,7 +221,7 @@ public class Game {
         return false;
     }
 
-    public int acesInHand(ArrayList<Card> hand) {
+    public static int acesInHand(ArrayList<Card> hand) {
         int acesCount = 0;
         for (int i = 0; i < hand.size(); i++) {
             if (hand.get(i).getValue() == 11) {
@@ -196,7 +231,7 @@ public class Game {
         return acesCount;
     }
 
-    public int getHandWithHighAce(ArrayList<Card> hand) {
+    public static int getHandWithHighAce(ArrayList<Card> hand) {
         int handValue = 0;
         for (Card card : hand) {
             handValue += card.getValue();
@@ -204,7 +239,7 @@ public class Game {
         return handValue;
     }
 
-    public int getHandValue(ArrayList<Card> hand) {
+    public static int getHandValue(ArrayList<Card> hand) {
         if (hasAce(hand)) {
             if (getHandWithHighAce(hand) <= 21) {
                 return getHandWithHighAce(hand);

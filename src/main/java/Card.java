@@ -51,8 +51,8 @@ public class Card {
         BufferedImage deckImage = ImageIO.read(new File("resources/images/card-sprite-sheet.jpeg"));
         BufferedImage backOfACard = ImageIO.read(new File("resources/images/facedown.png"));
 
-        int x = 2925;
-        int y = 1260;
+        int x = 1625;
+        int y = 700;
 
         // Create a 2D array from our sprite sheet of cards so we don't need 52 images
         BufferedImage[][] cardImages = new BufferedImage[4][13];
@@ -64,12 +64,12 @@ public class Card {
         }
 
         if (dealerTurn) {
-            cardY = 80;
+            cardY = 20;
         } else {
-            cardY = 600;
+            cardY = 400;
         }
 
-        cardX = 540 + 80 * cardNumber;
+        cardX = 520 + 80 * cardNumber;
 
         if (faceDown) {
             g2.drawImage(backOfACard, cardX, cardY, null);
