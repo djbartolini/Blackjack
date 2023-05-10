@@ -8,10 +8,11 @@ public class Game {
 
     public boolean faceDown;
     public boolean dealerWon;
-
     public volatile boolean roundOver;
 
     JFrame frame;
+    Deck deck;
+
 
 
 }

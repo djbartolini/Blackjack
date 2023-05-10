@@ -57,6 +57,18 @@ public class MenuComponent extends JComponent implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        // Event delegation for Menu component
+        JButton selected = (JButton) e.getSource();
 
+        if (selected == exitBtn) {
+            System.exit(0);
+        } else if (selected == startBtn) {
+            Main.currentState = Main.STATE.GAME;
+
+            Main.menuFrame.dispose();
+
+//            Main.gameRefreshThread.start();
+//            Main.gameCheckThread.start();
+        }
     }
 }

@@ -46,17 +46,17 @@ public class Main {
     }
 
     // Thread that runs the background images and updates it continuously
-//    public static Thread gameRefreshThread = new Thread() {
-//        public void run() {
-//            while (true) {
+    public static Thread gameRefreshThread = new Thread() {
+        public void run() {
+            while (true) {
 //                newGame.atmosphereComponent.refresh(chipBalance, playerScore, dealerScore - 1, newGame.faceDown);
-//            }
-//        }
-//    };
-//
-//    // Thread that checks game status, updates it continuously, and updates Game and its component accordingly
-//    public static Thread gameCheckThread = new Thread() {
-//        public void run() {
+            }
+        }
+    };
+
+    // Thread that checks game status, updates it continuously, and updates Game and its component accordingly
+    public static Thread gameCheckThread = new Thread() {
+        public void run() {
 //            while (true) {
 //                if (isFirstGame || newGame.roundOver) {
 //                    if (newGame.dealerWon) {
@@ -74,6 +74,6 @@ public class Main {
 //                    isFirstGame = false;
 //                }
 //            }
-//        }
-//    };
+        }
+    };
 }
