@@ -67,8 +67,8 @@ public class MenuComponent extends JComponent implements ActionListener {
 
             Main.menuFrame.dispose();
 
-//            Main.gameRefreshThread.start();
-//            Main.gameCheckThread.start();
+            Main.gameRefreshThread.start();
+            Main.gameCheckThread.start();
         }
     }
 }

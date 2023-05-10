@@ -27,7 +27,7 @@ public class GameComponent extends JComponent implements MouseListener {
     public boolean faceDown = true;
     public boolean betMade = false;
     private int chipBalance;
-    public static int curretBet;
+    public static int currentBet;
 
     public GameComponent(ArrayList<Card> dH, ArrayList<Card> pH) {
         dealerHand = dH;
@@ -113,13 +113,13 @@ public class GameComponent extends JComponent implements MouseListener {
             String response = JOptionPane.showInputDialog(null, "Please enter your betting amount!", "BETTING", JOptionPane.PLAIN_MESSAGE);
 
             try {
-                curretBet = Integer.parseInt(response);
+                currentBet = Integer.parseInt(response);
             } catch (NumberFormatException ex) {
-                curretBet = 1;
+                currentBet = 1;
             }
 
-            chipBalance -= curretBet;
-//            Main.newGame.startGame();
+            chipBalance -= currentBet;
+            Main.newGame.startGame();
         }
 
     }

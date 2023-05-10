@@ -49,6 +49,8 @@ public class Card {
 
     public void printCard(Graphics2D g2, boolean dealerTurn, boolean faceDown, int cardNumber) throws IOException {
         BufferedImage deckImage = ImageIO.read(new File("resources/images/card-sprite-sheet.jpeg"));
+        BufferedImage backOfACard = ImageIO.read(new File("resources/images/facedown.png"));
+
         int x = 2925;
         int y = 1260;
 
@@ -59,6 +61,20 @@ public class Card {
             for (int r = 0; r < 13; r++) {
                 cardImages[c][r] = deckImage.getSubimage(r*x/13, c*y/4, x/13, y/4);
             }
+        }
+
+        if (dealerTurn) {
+            cardY = 80;
+        } else {
+            cardY = 600;
+        }
+
+        cardX = 540 + 80 * cardNumber;
+
+        if (faceDown) {
+            g2.drawImage(backOfACard, cardX, cardY, null);
+        } else {
+            g2.drawImage(cardImages[suit][rank], cardX, cardY, null);
         }
     }
 

@@ -14,7 +14,7 @@ public class Main {
     public static int chipBalance = 1000;
 
     // Initialize a Game
-//    public static Game newGame = new Game(gameFrame);
+    public static Game newGame = new Game(gameFrame);
     private static boolean isFirstGame = true;
 
     // Game state
@@ -49,7 +49,7 @@ public class Main {
     public static Thread gameRefreshThread = new Thread() {
         public void run() {
             while (true) {
-//                newGame.atmosphereComponent.refresh(chipBalance, playerScore, dealerScore - 1, newGame.faceDown);
+                newGame.atmosphereComponent.refresh(chipBalance, playerScore, dealerScore - 1, newGame.faceDown);
             }
         }
     };
@@ -57,23 +57,23 @@ public class Main {
     // Thread that checks game status, updates it continuously, and updates Game and its component accordingly
     public static Thread gameCheckThread = new Thread() {
         public void run() {
-//            while (true) {
-//                if (isFirstGame || newGame.roundOver) {
-//                    if (newGame.dealerWon) {
-//                        dealerScore++;
-//                        chipBalance -= GameComponent.currentBet;
-//                    } else {
-//                        playerScore++;
-//                        chipBalance += GameComponent.currentBet * 2;
-//                    }
-//
-//                    // Initialize new game
-//                    gameFrame.getContentPane().removeAll();
-//                    newGame = new Game(gameFrame);
-//                    newGame.formGame();
-//                    isFirstGame = false;
-//                }
-//            }
+            while (true) {
+                if (isFirstGame || newGame.roundOver) {
+                    if (newGame.dealerWon) {
+                        dealerScore++;
+                        chipBalance -= GameComponent.currentBet;
+                    } else {
+                        playerScore++;
+                        chipBalance += GameComponent.currentBet * 2;
+                    }
+
+                    // Initialize new game
+                    gameFrame.getContentPane().removeAll();
+                    newGame = new Game(gameFrame);
+                    newGame.formGame();
+                    isFirstGame = false;
+                }
+            }
         }
     };
 }
